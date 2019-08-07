@@ -34,15 +34,14 @@ steps:
     arguments: '--version $(Build.BuildId)'
   condition: and(succeeded(), ne(variables['Build.Reason'], 'PullRequest'))
 
-- task: CmdLine@2
-  inputs:
-    script: 'ls /home/vsts/work/1/a/'
-
-# - task: AzureCLI@1
-#   displayName: 'AZ ACR helm push'
+# - task: CmdLine@2
 #   inputs:
-#     azureSubscription: $(azureSubscription)
-#     scriptLocation: inlineScript
-#     inlineScript: 'az acr helm push -n $(container-registry-name) /home/vsts/work/1/a/tt-web-$(Build.BuildId).tgz'
-#   condition: and(succeeded(), ne(variables['Build.Reason'], 'PullRequest'))
+#     script: 'ls /home/vsts/work/1/a/'
 
+- task: AzureCLI@1
+  displayName: 'AZ ACR helm push'
+  inputs:
+    azureSubscription: $(azureSubscription)
+    scriptLocation: inlineScript
+    inlineScript: 'az acr helm push -n $(container-registry-name) /home/vsts/work/1/a/web-$(Build.BuildId).tgz'
+  condition: and(succeeded(), ne(variables['Build.Reason'], 'PullRequest'))
