@@ -48,7 +48,8 @@ steps:
   inputs:
     script: |
       cd Source/Tailwind.Traders.Web
-      docker build -t $(container-registry-fqdn)/web:$(Build.BuildId) .
+      # docker build -t $(container-registry-fqdn)/web:$(Build.BuildId) .
+      docker build -t test .
   condition: and(succeeded(), ne(variables['Build.Reason'], 'PullRequest'))
 
 - task: AzureCLI@1
