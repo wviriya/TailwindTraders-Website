@@ -7,7 +7,7 @@ variables:
   location: eastus
   ImageName: website
   container-registry-name: ttacrajie6a75n2mue
-  container-registry-fqdn: 
+  container-registry-fqdn: $(container-registry-name).azurecr.io
 
 steps:
 
@@ -48,8 +48,7 @@ steps:
   inputs:
     script: |
       cd Source/Tailwind.Traders.Web
-      # docker build -t $(container-registry-fqdn)/web:$(Build.BuildId) .
-      docker build -t test .
+      docker build -t $(container-registry-fqdn)/web:$(Build.BuildId) .
   condition: and(succeeded(), ne(variables['Build.Reason'], 'PullRequest'))
 
 - task: AzureCLI@1
