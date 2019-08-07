@@ -1,39 +1,44 @@
+pool:
+  name: Hosted Ubuntu 1604
+
 variables:
   azureSubscription: nepeters-azure
   resourcegroup: tailwind-traders
   location: eastus
   ImageName: website
-  acr: ttacrajie6a75n2mue
+  container-registry-name: ttacrajie6a75n2mue
 
 steps:
-- task: AzureResourceGroupDeployment@2
-  displayName: Azure Deployment
+
+- task: AzureCLI@1
+  displayName: 'AZ ACR Login'
   inputs:
     azureSubscription: $(azureSubscription)
-    resourceGroupName: $(resourcegroup)
-    location: $(location)
-    csmFile: Deploy/deployment.json
+    scriptLocation: inlineScript
+    inlineScript: 'az acr login --name $(container-registry-name)'
+  condition: and(succeeded(), ne(variables['Build.Reason'], 'PullRequest'))
 
-- task: keesschollaart.arm-outputs.arm-outputs.ARM Outputs@5
-  displayName: ARM Outputs
+- task: HelmDeploy@0
+  displayName: 'helm init --client-only'
   inputs:
-    ConnectedServiceNameARM: $(azureSubscription)
-    resourceGroupName: $(resourcegroup)
+    connectionType: None
+    command: init
+    arguments: '--client-only'
+  condition: and(succeeded(), ne(variables['Build.Reason'], 'PullRequest'))
 
-- task: Docker@1
-  displayName: 'Build an image'
+- task: HelmDeploy@0
+  displayName: 'helm package'
   inputs:
-    azureSubscriptionEndpoint: $(azureSubscription)
-    azureContainerRegistry: $(acr).azurecr.io
-    dockerFile: Source/Tailwind.Traders.Web/Dockerfile
-    arguments: '-t $(acr).azurecr.io/$(ImageName):$(Build.BuildId)'
-    imageName: '$(ImageName):$(Build.BuildId)'
-    includeLatestTag: true
+    command: package
+    chartPath: 'Deploy/helm/web'
+    arguments: '--version $(Build.BuildId)'
+  condition: and(succeeded(), ne(variables['Build.Reason'], 'PullRequest'))
 
-- task: Docker@1
-  displayName: 'Push Image'
+- task: AzureCLI@1
+  displayName: 'AZ ACR helm push'
   inputs:
-    azureSubscriptionEndpoint: $(azureSubscription)
-    azureContainerRegistry: '$(acr).azurecr.io'
-    command: 'Push an image'
-    imageName: '$(ImageName):$(Build.BuildId)'
+    azureSubscription: $(azureSubscription)
+    scriptLocation: inlineScript
+    inlineScript: 'az acr helm push -n $(container-registry-name) /home/vsts/work/1/a/web-$(Build.BuildId).tgz'
+  condition: and(succeeded(), ne(variables['Build.Reason'], 'PullRequest'))
+
