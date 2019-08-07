@@ -39,6 +39,6 @@ steps:
   inputs:
     azureSubscription: $(azureSubscription)
     scriptLocation: inlineScript
-    inlineScript: 'az acr helm push -n $(container-registry-name) /home/vsts/work/1/a/web-$(Build.BuildId).tgz'
+    inlineScript: 'az acr helm push -n $(container-registry-name) /home/vsts/work/1/a/tt-web-$(Build.BuildId).tgz'
   condition: and(succeeded(), ne(variables['Build.Reason'], 'PullRequest'))
 
