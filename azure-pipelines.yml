@@ -7,7 +7,7 @@ variables:
   location: eastus
   ImageName: website
   container-registry-name: ttacrajie6a75n2mue
-  container-registry-fqdn: $(container-registry-name).azurecr.io
+  container-registry-fqdn: ttacrajie6a75n2mue.azurecr.io
 
 steps:
 
