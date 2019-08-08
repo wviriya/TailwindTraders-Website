@@ -1,6 +1,3 @@
-pool:
-  name: Hosted Ubuntu 1604
-
 variables:
   azureSubscription: nepeters-azure
   resourcegroup: tailwind-traders
@@ -9,60 +6,68 @@ variables:
   container-registry-name: ttacrajie6a75n2mue
   container-registry-fqdn: ttacrajie6a75n2mue.azurecr.io
 
-steps:
+stages:
+- stage: build
+  jobs:
+  - job: build
 
-- task: AzureCLI@1
-  displayName: 'AZ ACR Login'
-  inputs:
-    azureSubscription: $(azureSubscription)
-    scriptLocation: inlineScript
-    inlineScript: 'az acr login --name $(container-registry-name)'
-  condition: and(succeeded(), ne(variables['Build.Reason'], 'PullRequest'))
+    pool:
+      name: Hosted Ubuntu 1604
 
-- task: HelmDeploy@0
-  displayName: 'helm init --client-only'
-  inputs:
-    connectionType: None
-    command: init
-    arguments: '--client-only'
-  condition: and(succeeded(), ne(variables['Build.Reason'], 'PullRequest'))
+    steps:
 
-- task: HelmDeploy@0
-  displayName: 'helm package (tt-web)'
-  inputs:
-    command: package
-    chartPath: 'Deploy/helm/web'
-    arguments: '--version $(Build.BuildId)'
-  condition: and(succeeded(), ne(variables['Build.Reason'], 'PullRequest'))
+    - task: AzureCLI@1
+      displayName: 'AZ ACR Login'
+      inputs:
+        azureSubscription: $(azureSubscription)
+        scriptLocation: inlineScript
+        inlineScript: 'az acr login --name $(container-registry-name)'
+      condition: and(succeeded(), ne(variables['Build.Reason'], 'PullRequest'))
 
-- task: AzureCLI@1
-  displayName: 'AZ ACR helm push (tt-web)'
-  inputs:
-    azureSubscription: $(azureSubscription)
-    scriptLocation: inlineScript
-    inlineScript: 'az acr helm push -n $(container-registry-name) /home/vsts/work/1/a/web-$(Build.BuildId).tgz'
-  condition: and(succeeded(), ne(variables['Build.Reason'], 'PullRequest'))
+    - task: HelmDeploy@0
+      displayName: 'helm init --client-only'
+      inputs:
+        connectionType: None
+        command: init
+        arguments: '--client-only'
+      condition: and(succeeded(), ne(variables['Build.Reason'], 'PullRequest'))
 
-- task: CmdLine@2
-  displayName: 'docker build (tt-web)'
-  inputs:
-    script: |
-      cd Source/Tailwind.Traders.Web
-      docker build -t $(container-registry-fqdn)/web:$(Build.BuildId) .
-  condition: and(succeeded(), ne(variables['Build.Reason'], 'PullRequest'))
+    - task: HelmDeploy@0
+      displayName: 'helm package (tt-web)'
+      inputs:
+        command: package
+        chartPath: 'Deploy/helm/web'
+        arguments: '--version $(Build.BuildId)'
+      condition: and(succeeded(), ne(variables['Build.Reason'], 'PullRequest'))
 
-- task: AzureCLI@1
-  displayName: 'AZ ACR Login'
-  inputs:
-    azureSubscription: $(azureSubscription)
-    scriptLocation: inlineScript
-    inlineScript: 'az acr login --name $(container-registry-name)'
-  condition: and(succeeded(), ne(variables['Build.Reason'], 'PullRequest'))
+    - task: AzureCLI@1
+      displayName: 'AZ ACR helm push (tt-web)'
+      inputs:
+        azureSubscription: $(azureSubscription)
+        scriptLocation: inlineScript
+        inlineScript: 'az acr helm push -n $(container-registry-name) /home/vsts/work/1/a/web-$(Build.BuildId).tgz'
+      condition: and(succeeded(), ne(variables['Build.Reason'], 'PullRequest'))
 
-- task: CmdLine@2
-  displayName: 'docker push (tt-web)'
-  inputs:
-    script: |
-      docker push $(container-registry-fqdn)/web:$(Build.BuildId)
-  condition: and(succeeded(), ne(variables['Build.Reason'], 'PullRequest'))
+    - task: CmdLine@2
+      displayName: 'docker build (tt-web)'
+      inputs:
+        script: |
+          cd Source/Tailwind.Traders.Web
+          docker build -t $(container-registry-fqdn)/web:$(Build.BuildId) .
+      condition: and(succeeded(), ne(variables['Build.Reason'], 'PullRequest'))
+
+    - task: AzureCLI@1
+      displayName: 'AZ ACR Login'
+      inputs:
+        azureSubscription: $(azureSubscription)
+        scriptLocation: inlineScript
+        inlineScript: 'az acr login --name $(container-registry-name)'
+      condition: and(succeeded(), ne(variables['Build.Reason'], 'PullRequest'))
+
+    - task: CmdLine@2
+      displayName: 'docker push (tt-web)'
+      inputs:
+        script: |
+          docker push $(container-registry-fqdn)/web:$(Build.BuildId)
+      condition: and(succeeded(), ne(variables['Build.Reason'], 'PullRequest'))
 
