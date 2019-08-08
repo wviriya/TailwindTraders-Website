@@ -71,3 +71,28 @@ stages:
           docker push $(container-registry-fqdn)/web:$(Build.BuildId)
       condition: and(succeeded(), ne(variables['Build.Reason'], 'PullRequest'))
 
+- stage: release-pre-production
+  jobs:
+  - job: myJob
+    pool:
+      name: Hosted Ubuntu 1604
+    steps:
+    - task: CmdLine@2
+      inputs:
+        script: 'echo Hello world'
+    - task: CmdLine@2
+      inputs:
+        script: 'echo Hello world'
+
+- stage: release-production
+  jobs:
+  - job: myJob
+    pool:
+      name: Hosted Ubuntu 1604
+    steps:
+    - task: CmdLine@2
+      inputs:
+        script: 'echo Hello world'
+    - task: CmdLine@2
+      inputs:
+        script: 'echo Hello world'
