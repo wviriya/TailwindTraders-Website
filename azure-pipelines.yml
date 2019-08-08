@@ -83,6 +83,13 @@ stages:
       runOnce:
         deploy:
           steps:
+          - task: HelmDeploy@0
+            displayName: 'helm init --client-only'
+            inputs:
+              connectionType: None
+              command: init
+              arguments: '--client-only'
+
           - task: AzureCLI@1
             displayName: 'AZ ACR Login'
             inputs:
