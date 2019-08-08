@@ -15,7 +15,6 @@ stages:
       name: Hosted Ubuntu 1604
 
     steps:
-
     - task: AzureCLI@1
       displayName: 'AZ ACR Login'
       inputs:
@@ -73,26 +72,38 @@ stages:
 
 - stage: release_pre_production
   jobs:
-  - job: myJob
+  - deployment: release_pre_production
+    displayName: release_pre_production
     pool:
       name: Hosted Ubuntu 1604
-    steps:
-    - task: CmdLine@2
-      inputs:
-        script: 'echo Hello world'
-    - task: CmdLine@2
-      inputs:
-        script: 'echo Hello world'
+    environment: pre-production
+    strategy:
+      runOnce:
+        deploy:
+          steps:
+          - task: CmdLine@2
+            inputs:
+              script: 'echo Hello world'
+
+          - task: CmdLine@2
+            inputs:
+              script: 'echo Hello world'
 
 - stage: release_production
   jobs:
-  - job: myJob
+  - deployment: release_pre_production
+    displayName: release_pre_production
     pool:
       name: Hosted Ubuntu 1604
-    steps:
-    - task: CmdLine@2
-      inputs:
-        script: 'echo Hello world'
-    - task: CmdLine@2
-      inputs:
-        script: 'echo Hello world'
+    environment: pre-production
+    strategy:
+      runOnce:
+        deploy:
+          steps:
+          - task: CmdLine@2
+            inputs:
+              script: 'echo Hello world'
+
+          - task: CmdLine@2
+            inputs:
+              script: 'echo Hello world'
