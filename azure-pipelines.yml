@@ -58,13 +58,13 @@ stages:
           docker build -t $(container-registry-fqdn)/web:$(Build.BuildId) .
       condition: and(succeeded(), ne(variables['Build.Reason'], 'PullRequest'))
 
-    - task: AzureCLI@1
-      displayName: 'AZ ACR Login'
-      inputs:
-        azureSubscription: $(azureSubscription)
-        scriptLocation: inlineScript
-        inlineScript: 'az acr login --name $(container-registry-name)'
-      condition: and(succeeded(), ne(variables['Build.Reason'], 'PullRequest'))
+    # - task: AzureCLI@1
+    #   displayName: 'AZ ACR Login'
+    #   inputs:
+    #     azureSubscription: $(azureSubscription)
+    #     scriptLocation: inlineScript
+    #     inlineScript: 'az acr login --name $(container-registry-name)'
+    #   condition: and(succeeded(), ne(variables['Build.Reason'], 'PullRequest'))
 
     - task: CmdLine@2
       displayName: 'docker push (tt-web)'
