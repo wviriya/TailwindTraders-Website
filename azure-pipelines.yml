@@ -21,7 +21,7 @@ stages:
 
     - task: CmdLine@2
       inputs:
-        script: 'ls'
+        script: 'ls Deploy/helm/web'
     # - task: AzureCLI@1
     #   displayName: 'AZ ACR Login'
     #   inputs:
