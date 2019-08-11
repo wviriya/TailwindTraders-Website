@@ -97,7 +97,7 @@ stages:
           - task: CmdLine@2
             displayName: 'ls current dir'
             inputs:
-              script: 'ls'
+              script: 'cd TailwindTraders-Website'
 
           - task: AzureCLI@1
             inputs:
