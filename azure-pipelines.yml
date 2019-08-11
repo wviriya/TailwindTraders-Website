@@ -35,7 +35,17 @@ stages:
     - task: CmdLine@2
       displayName: 'ls current dir'
       inputs:
-        script: 'ls'
+        script: 'ls /home/vsts/work/1/a'
+
+    - task: CmdLine@2
+      displayName: 'ls current dir'
+      inputs:
+        script: 'ls /home/vsts/work/1/b'
+
+    - task: CmdLine@2
+      displayName: 'ls current dir'
+      inputs:
+        script: 'ls /home/vsts/work/1/s'
 
     - task: PublishBuildArtifacts@1
       displayName: 'Publish Artifact'
