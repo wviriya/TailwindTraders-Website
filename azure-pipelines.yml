@@ -115,8 +115,8 @@ stages:
                 az acr login --name $(containerRegistryName)
                 az acr helm repo add --name $(containerRegistryName)
                 az aks get-credentials --name $(aks-cluster) --resource-group $(aks-cluster-rg) --admin
-                # helm upgrade web $(containerRegistryName)/web --install -f /home/vsts/work/1/drop/Deploy/helm/gvalues.yaml --set ingress.protocol=http --set ingress.hosts=$(ingress) --set image.repository=$(containerRegistryFqdn)/web --set image.tag=latest
-                helm install --name web -f /home/vsts/work/1/drop/Deploy/helm/gvalues.yaml --set ingress.protocol=http --set ingress.hosts=$(ingress) --set image.repository=$(containerRegistryFqdn)/web --set image.tag=latest /home/vsts/work/1/drop/Deploy/helm/web
+                helm upgrade web $(containerRegistryName)/web --install -f /home/vsts/work/1/drop/Deploy/helm/gvalues.yaml --set ingress.protocol=http --set ingress.hosts={$(ingress)} --set image.repository=$(containerRegistryFqdn)/web --set image.tag=$(Release.Artifacts.drop.BuildId
+                # helm install --name web -f /home/vsts/work/1/drop/Deploy/helm/gvalues.yaml --set ingress.protocol=http --set ingress.hosts=$(ingress) --set image.repository=$(containerRegistryFqdn)/web --set image.tag=latest /home/vsts/work/1/drop/Deploy/helm/web
 
 - stage: release_production
   jobs:
