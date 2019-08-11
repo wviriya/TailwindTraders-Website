@@ -93,7 +93,7 @@ stages:
           - task: Bash@3
             inputs:
               targetType: 'inline'
-              script: 'echo $(Release.Artifacts.drop.BuildId)'
+              script: 'echo $(Release.ReleaseId)'
 
           # - task: HelmDeploy@0
           #   displayName: 'helm init --client-only'
