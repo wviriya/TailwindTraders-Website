@@ -10,6 +10,7 @@ variables:
   ingress: 8e1375690b8947f8adf2.eastus.aksapp.io
 
 stages:
+
 - stage: build
   jobs:
   - job: build
@@ -86,12 +87,16 @@ stages:
       runOnce:
         deploy:
           steps:
+          - download: current
+            artifact: drop
+            patterns: '**/*'
           # - task: HelmDeploy@0
           #   displayName: 'helm init --client-only'
           #   inputs:
           #     connectionType: None
           #     command: init
           #     arguments: '--client-only'
+
 
           - task: AzureCLI@1
             displayName: 'AZ ACR Login'
