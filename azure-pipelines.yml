@@ -28,54 +28,50 @@ stages:
         inlineScript: 'az acr login --name $(containerRegistryName)'
       condition: and(succeeded(), ne(variables['Build.Reason'], 'PullRequest'))
 
-    - task: CmdLine@2
+    - task: HelmDeploy@0
+      displayName: 'helm init --client-only'
       inputs:
-        script: 'pwd'
+        connectionType: None
+        command: init
+        arguments: '--client-only'
+      condition: and(succeeded(), ne(variables['Build.Reason'], 'PullRequest'))
+
+    - task: HelmDeploy@0
+      displayName: 'helm package (tt-web)'
+      inputs:
+        command: package
+        chartPath: 'Deploy/helm/web'
+        arguments: '--version $(Build.BuildId)'
+      condition: and(succeeded(), ne(variables['Build.Reason'], 'PullRequest'))
+
+    - task: AzureCLI@1
+      displayName: 'AZ ACR helm push (tt-web)'
+      inputs:
+        azureSubscription: $(azureSubscription)
+        scriptLocation: inlineScript
+        inlineScript: 'az acr helm push -n $(containerRegistryName) /home/vsts/work/1/a/web-$(Build.BuildId).tgz'
+      condition: and(succeeded(), ne(variables['Build.Reason'], 'PullRequest'))
+
+    - task: CmdLine@2
+      displayName: 'docker build (tt-web)'
+      inputs:
+        script: |
+          cd Source/Tailwind.Traders.Web
+          docker build -t $(containerRegistryFqdn)/web:$(Build.BuildId) .
+      condition: and(succeeded(), ne(variables['Build.Reason'], 'PullRequest'))
+
+    - task: CmdLine@2
+      displayName: 'docker push (tt-web)'
+      inputs:
+        script: |
+          docker push $(containerRegistryFqdn)/web:$(Build.BuildId)
+      condition: and(succeeded(), ne(variables['Build.Reason'], 'PullRequest'))
 
     - task: PublishBuildArtifacts@1
-      displayName: 'Publish Artifact'
+      displayName: 'Publish Artifacts'
       inputs:
         PathtoPublish: '/home/vsts/work/1/s'
         artifactName: 'drop' 
-
-    # - task: HelmDeploy@0
-    #   displayName: 'helm init --client-only'
-    #   inputs:
-    #     connectionType: None
-    #     command: init
-    #     arguments: '--client-only'
-    #   condition: and(succeeded(), ne(variables['Build.Reason'], 'PullRequest'))
-
-    # - task: HelmDeploy@0
-    #   displayName: 'helm package (tt-web)'
-    #   inputs:
-    #     command: package
-    #     chartPath: 'Deploy/helm/web'
-    #     arguments: '--version $(Build.BuildId)'
-    #   condition: and(succeeded(), ne(variables['Build.Reason'], 'PullRequest'))
-
-    # - task: AzureCLI@1
-    #   displayName: 'AZ ACR helm push (tt-web)'
-    #   inputs:
-    #     azureSubscription: $(azureSubscription)
-    #     scriptLocation: inlineScript
-    #     inlineScript: 'az acr helm push -n $(containerRegistryName) /home/vsts/work/1/a/web-$(Build.BuildId).tgz'
-    #   condition: and(succeeded(), ne(variables['Build.Reason'], 'PullRequest'))
-
-    # - task: CmdLine@2
-    #   displayName: 'docker build (tt-web)'
-    #   inputs:
-    #     script: |
-    #       cd Source/Tailwind.Traders.Web
-    #       docker build -t $(containerRegistryFqdn)/web:$(Build.BuildId) .
-    #   condition: and(succeeded(), ne(variables['Build.Reason'], 'PullRequest'))
-
-    # - task: CmdLine@2
-    #   displayName: 'docker push (tt-web)'
-    #   inputs:
-    #     script: |
-    #       docker push $(containerRegistryFqdn)/web:$(Build.BuildId)
-    #   condition: and(succeeded(), ne(variables['Build.Reason'], 'PullRequest'))
 
 
 - stage: release_pre_production
@@ -94,12 +90,12 @@ stages:
             artifact: drop
             patterns: '**/*'
 
-          # - task: HelmDeploy@0
-          #   displayName: 'helm init --client-only'
-          #   inputs:
-          #     connectionType: None
-          #     command: init
-          #     arguments: '--client-only'
+          - task: HelmDeploy@0
+            displayName: 'helm init --client-only'
+            inputs:
+              connectionType: None
+              command: init
+              arguments: '--client-only'
 
           - task: AzureCLI@1
             displayName: 'AZ ACR Login'
@@ -111,16 +107,15 @@ stages:
           - task: CmdLine@2
             inputs:
               script: 'cat /home/vsts/work/1/drop/Deploy/helm/gvalues.yaml'
-
-          # - task: AzureCLI@1
-          #   inputs:
-          #     azureSubscription: 'nepeters-azure'
-          #     scriptLocation: 'inlineScript'
-          #     inlineScript: |
-          #       az acr login --name $(containerRegistryName)
-          #       az acr helm repo add --name $(containerRegistryName)
-          #       az aks get-credentials --name $(aks-cluster) --resource-group $(aks-cluster-rg) --admin
-          #       helm upgrade web $(containerRegistryName)/web --install -f Deploy/helm/gvalues.yaml --set ingress.protocol=http --set ingress.hosts=$(ingress) --set image.repository=$(containerRegistryFqdn)/web --set image.tag=latest
+          - task: AzureCLI@1
+            inputs:
+              azureSubscription: 'nepeters-azure'
+              scriptLocation: 'inlineScript'
+              inlineScript: |
+                az acr login --name $(containerRegistryName)
+                az acr helm repo add --name $(containerRegistryName)
+                az aks get-credentials --name $(aks-cluster) --resource-group $(aks-cluster-rg) --admin
+                helm upgrade web $(containerRegistryName)/web --install -f /home/vsts/work/1/drop/Deploy/helm/gvalues.yaml --set ingress.protocol=http --set ingress.hosts=$(ingress) --set image.repository=$(containerRegistryFqdn)/web --set image.tag=latest
 
 - stage: release_production
   jobs:
