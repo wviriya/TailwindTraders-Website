@@ -90,11 +90,10 @@ stages:
               azureSubscription: $(azureSubscription)
               scriptLocation: inlineScript
               inlineScript: 'az acr login --name $(containerRegistryName)'
-
           - task: CmdLine@2
             displayName: 'ls current dir'
             inputs:
-              script: 'ls'
+              script: 'pwd'
 
           - task: AzureCLI@1
             inputs:
