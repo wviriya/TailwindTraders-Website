@@ -95,9 +95,10 @@ stages:
       runOnce:
         deploy:
           steps:
-          - download: current
-            artifact: drop
-            patterns: '**/*'
+          # - download: current
+          #   artifact: drop
+          #   patterns: '**/*'
+
           # - task: HelmDeploy@0
           #   displayName: 'helm init --client-only'
           #   inputs:
@@ -119,7 +120,7 @@ stages:
           - task: CmdLine@2
             displayName: 'ls current dir'
             inputs:
-              script: 'ls'
+              script: 'ls /home/vsts/work/1/s'
 
           # - task: AzureCLI@1
           #   inputs:
