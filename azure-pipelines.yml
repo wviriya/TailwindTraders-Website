@@ -108,6 +108,10 @@ stages:
               scriptLocation: inlineScript
               inlineScript: 'az acr login --name $(containerRegistryName)'
 
+          - task: CmdLine@2
+            inputs:
+              script: 'ls'
+
           # - task: AzureCLI@1
           #   inputs:
           #     azureSubscription: 'nepeters-azure'
