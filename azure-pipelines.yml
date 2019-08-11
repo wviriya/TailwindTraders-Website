@@ -28,31 +28,11 @@ stages:
         inlineScript: 'az acr login --name $(containerRegistryName)'
       condition: and(succeeded(), ne(variables['Build.Reason'], 'PullRequest'))
 
-    - task: CmdLine@2
-      displayName: 'pwd current dir'
-      inputs:
-        script: 'pwd'
-    - task: CmdLine@2
-      displayName: 'ls current dir'
-      inputs:
-        script: 'ls /home/vsts/work/1/a'
-
-    - task: CmdLine@2
-      displayName: 'ls current dir'
-      inputs:
-        script: 'ls /home/vsts/work/1/b'
-
-    - task: CmdLine@2
-      displayName: 'ls current dir'
-      inputs:
-        script: 'ls /home/vsts/work/1/s'
-
     - task: PublishBuildArtifacts@1
       displayName: 'Publish Artifact'
       inputs:
-        PathtoPublish: '$(build.artifactstagingdirectory)'
-      condition: succeededOrFailed()
-
+        PathtoPublish: '$(Build.ArtifactStagingDirectory)'
+        artifactName: 'drop' 
 
     # - task: HelmDeploy@0
     #   displayName: 'helm init --client-only'
@@ -105,9 +85,10 @@ stages:
       runOnce:
         deploy:
           steps:
-          # - download: current
-          #   artifact: drop
-          #   patterns: '**/*'
+
+          - download: current
+            artifact: drop
+            patterns: '**/*'
 
           # - task: HelmDeploy@0
           #   displayName: 'helm init --client-only'
@@ -116,31 +97,12 @@ stages:
           #     command: init
           #     arguments: '--client-only'
 
-
           - task: AzureCLI@1
             displayName: 'AZ ACR Login'
             inputs:
               azureSubscription: $(azureSubscription)
               scriptLocation: inlineScript
               inlineScript: 'az acr login --name $(containerRegistryName)'
-          - task: CmdLine@2
-            displayName: 'pwd current dir'
-            inputs:
-              script: 'pwd'
-          - task: CmdLine@2
-            displayName: 'ls current dir'
-            inputs:
-              script: 'ls /home/vsts/work/1/a'
-
-          - task: CmdLine@2
-            displayName: 'ls current dir'
-            inputs:
-              script: 'ls /home/vsts/work/1/b'
-
-          - task: CmdLine@2
-            displayName: 'ls current dir'
-            inputs:
-              script: 'ls /home/vsts/work/1/s'
 
           # - task: AzureCLI@1
           #   inputs:
