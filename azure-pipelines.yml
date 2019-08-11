@@ -120,7 +120,7 @@ stages:
           - task: CmdLine@2
             displayName: 'ls current dir'
             inputs:
-              script: 'ls /home/vsts/work/1/s'
+              script: 'ls /home/vsts/work/1/a'
 
           # - task: AzureCLI@1
           #   inputs:
