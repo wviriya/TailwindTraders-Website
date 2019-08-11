@@ -37,6 +37,13 @@ stages:
       inputs:
         script: 'ls'
 
+    - task: PublishBuildArtifacts@1
+      displayName: 'Publish Artifact'
+      inputs:
+        PathtoPublish: '$(build.artifactstagingdirectory)'
+      condition: succeededOrFailed()
+
+
     # - task: HelmDeploy@0
     #   displayName: 'helm init --client-only'
     #   inputs:
@@ -75,6 +82,7 @@ stages:
     #     script: |
     #       docker push $(containerRegistryFqdn)/web:$(Build.BuildId)
     #   condition: and(succeeded(), ne(variables['Build.Reason'], 'PullRequest'))
+
 
 - stage: release_pre_production
   jobs:
