@@ -8,6 +8,7 @@ variables:
   aks-cluster: tailwindtradersaksajie6a75n2mue
   aks-cluster-rg: tailwind-traders
   ingress: 8e1375690b8947f8adf2.eastus.aksapp.io
+  system.debug: true
 
 stages:
 
