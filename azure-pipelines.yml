@@ -27,44 +27,44 @@ stages:
         inlineScript: 'az acr login --name $(containerRegistryName)'
       condition: and(succeeded(), ne(variables['Build.Reason'], 'PullRequest'))
 
-    - task: HelmDeploy@0
-      displayName: 'helm init --client-only'
-      inputs:
-        connectionType: None
-        command: init
-        arguments: '--client-only'
-      condition: and(succeeded(), ne(variables['Build.Reason'], 'PullRequest'))
+    # - task: HelmDeploy@0
+    #   displayName: 'helm init --client-only'
+    #   inputs:
+    #     connectionType: None
+    #     command: init
+    #     arguments: '--client-only'
+    #   condition: and(succeeded(), ne(variables['Build.Reason'], 'PullRequest'))
 
-    - task: HelmDeploy@0
-      displayName: 'helm package (tt-web)'
-      inputs:
-        command: package
-        chartPath: 'Deploy/helm/web'
-        arguments: '--version $(Build.BuildId)'
-      condition: and(succeeded(), ne(variables['Build.Reason'], 'PullRequest'))
+    # - task: HelmDeploy@0
+    #   displayName: 'helm package (tt-web)'
+    #   inputs:
+    #     command: package
+    #     chartPath: 'Deploy/helm/web'
+    #     arguments: '--version $(Build.BuildId)'
+    #   condition: and(succeeded(), ne(variables['Build.Reason'], 'PullRequest'))
 
-    - task: AzureCLI@1
-      displayName: 'AZ ACR helm push (tt-web)'
-      inputs:
-        azureSubscription: $(azureSubscription)
-        scriptLocation: inlineScript
-        inlineScript: 'az acr helm push -n $(containerRegistryName) /home/vsts/work/1/a/web-$(Build.BuildId).tgz'
-      condition: and(succeeded(), ne(variables['Build.Reason'], 'PullRequest'))
+    # - task: AzureCLI@1
+    #   displayName: 'AZ ACR helm push (tt-web)'
+    #   inputs:
+    #     azureSubscription: $(azureSubscription)
+    #     scriptLocation: inlineScript
+    #     inlineScript: 'az acr helm push -n $(containerRegistryName) /home/vsts/work/1/a/web-$(Build.BuildId).tgz'
+    #   condition: and(succeeded(), ne(variables['Build.Reason'], 'PullRequest'))
 
-    - task: CmdLine@2
-      displayName: 'docker build (tt-web)'
-      inputs:
-        script: |
-          cd Source/Tailwind.Traders.Web
-          docker build -t $(containerRegistryFqdn)/web:$(Build.BuildId) .
-      condition: and(succeeded(), ne(variables['Build.Reason'], 'PullRequest'))
+    # - task: CmdLine@2
+    #   displayName: 'docker build (tt-web)'
+    #   inputs:
+    #     script: |
+    #       cd Source/Tailwind.Traders.Web
+    #       docker build -t $(containerRegistryFqdn)/web:$(Build.BuildId) .
+    #   condition: and(succeeded(), ne(variables['Build.Reason'], 'PullRequest'))
 
-    - task: CmdLine@2
-      displayName: 'docker push (tt-web)'
-      inputs:
-        script: |
-          docker push $(containerRegistryFqdn)/web:$(Build.BuildId)
-      condition: and(succeeded(), ne(variables['Build.Reason'], 'PullRequest'))
+    # - task: CmdLine@2
+    #   displayName: 'docker push (tt-web)'
+    #   inputs:
+    #     script: |
+    #       docker push $(containerRegistryFqdn)/web:$(Build.BuildId)
+    #   condition: and(succeeded(), ne(variables['Build.Reason'], 'PullRequest'))
 
 - stage: release_pre_production
   jobs:
@@ -91,9 +91,13 @@ stages:
               scriptLocation: inlineScript
               inlineScript: 'az acr login --name $(containerRegistryName)'
           - task: CmdLine@2
-            displayName: 'ls current dir'
+            displayName: 'pwd current dir'
             inputs:
               script: 'pwd'
+          - task: CmdLine@2
+            displayName: 'ls current dir'
+            inputs:
+              script: 'ls'
 
           - task: AzureCLI@1
             inputs:
