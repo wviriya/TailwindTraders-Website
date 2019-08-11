@@ -110,7 +110,7 @@ stages:
 
           - task: CmdLine@2
             inputs:
-              script: 'ls'
+              script: 'cat /home/vsts/work/1/drop/Deploy/helm/gvalues.yaml'
 
           # - task: AzureCLI@1
           #   inputs:
