@@ -28,6 +28,10 @@ stages:
         inlineScript: 'az acr login --name $(containerRegistryName)'
       condition: and(succeeded(), ne(variables['Build.Reason'], 'PullRequest'))
 
+    - task: CmdLine@2
+      inputs:
+        script: 'ls'
+
     - task: PublishBuildArtifacts@1
       displayName: 'Publish Artifact'
       inputs:
