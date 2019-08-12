@@ -6,8 +6,8 @@ variables:
   # Container Registry
   containerRegistryName: ttacr5iny4v2wygm3k
   containerRegistryFqdn: ttacr5iny4v2wygm3k.azurecr.io
-  containerRegistryName-pre-prod: ttacr5iny4v2wygm3k
-  containerRegistryFqdn-pre-prod: ttacr5iny4v2wygm3k.azurecr.io
+  # containerRegistryName-pre-prod: ttacr5iny4v2wygm3k
+  # containerRegistryFqdn-pre-prod: ttacr5iny4v2wygm3k.azurecr.io
 
   # Azure Kubernetes Service
   aks-cluster: tailwindtradersaks5iny4v2wygm3k
