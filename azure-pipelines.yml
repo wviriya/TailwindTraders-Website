@@ -3,21 +3,19 @@ variables:
   # Azure
   azureSubscription: nepeters-azure
 
-  # Container Registry
-  containerRegistryName: ttacrngud26ovgb4nc
-  containerRegistryFqdn: ttacrngud26ovgb4nc.azurecr.io
-  # containerRegistryName-pre-prod: ttacr5iny4v2wygm3k
-  # containerRegistryFqdn-pre-prod: ttacr5iny4v2wygm3k.azurecr.io
-
   # Azure Kubernetes Service production
-  aks-cluster: tailwindtradersaksngud26ovgb4nc
+  containerRegistryName: ttacrtfueoquph3mtw
+  containerRegistryFqdn: ttacrtfueoquph3mtw.azurecr.io
+  aks-cluster: tailwindtradersakstfueoquph3mtw
   aks-cluster-rg: twt-aks-cluster
-  ingress: 1b761f17f2594e9184d0.eastus2.aksapp.io
+  ingress: a8743d8c24e94be0b078.eastus2.aksapp.io
 
   # Azure Kubernetes Service pre-production
-  aks-cluster-pre-prod: tailwindtradersakstbsxyzrioekbm
+  containerRegistryName: ttacrbfhhvynll7sie
+  containerRegistryFqdn: ttacrbfhhvynll7sie.azurecr.io
+  aks-cluster-pre-prod: tailwindtradersaksbfhhvynll7sie
   aks-cluster-rg-pre-prod: tailwind-pre-production
-  ingress-pre-prod: dcc025f1ea7b441cafc1.eastus.aksapp.io
+  ingress-pre-prod: 8b0d337f2ff1469b97be.eastus2.aksapp.io
 
 stages:
 
